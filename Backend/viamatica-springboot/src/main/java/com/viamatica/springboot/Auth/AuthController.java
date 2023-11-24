@@ -1,7 +1,9 @@
 package com.viamatica.springboot.Auth;
 
+import com.viamatica.springboot.Util.VerifyUser;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +19,15 @@ public class AuthController {
 
     @PostMapping("/register")
     public  AuthResponse register(@RequestBody RequestRegister requestRegister){
-        return authService.register(requestRegister);
+        if(VerifyUser.isValidUsername(requestRegister.getUsername()))
+        {
+            return authService.register(requestRegister);
+        }
+        else
+        {
+           return new AuthResponse(null,null,"Username not valid");
+        }
+
     }
 
 }

@@ -16,4 +16,9 @@ public class RequestRegister {
     private String lastnames;
     private String identification;
     private Date birthdate;
+    private String password;
+
+    public String getMail() {
+        return this.username+"@gmail.com";
+    }
 }

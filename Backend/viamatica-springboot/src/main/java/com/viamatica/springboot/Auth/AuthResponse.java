@@ -1,5 +1,6 @@
 package com.viamatica.springboot.Auth;
 
+import com.viamatica.springboot.Entity.User;
 import lombok.*;
 
 @Data
@@ -7,6 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 public class AuthResponse {
-    private String user ;
+    private User user ;
     private String token;
+    private String error;
 }
