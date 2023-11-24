@@ -22,7 +22,7 @@ public class User implements UserDetails {
     private String username;
     private String Password;
     private String Mail;
-    private String SessionActive;
+    private String sessionActive;
     //Relation with Person table
     @ManyToOne
     @JoinColumn(name = "Persona_idPersona2")
