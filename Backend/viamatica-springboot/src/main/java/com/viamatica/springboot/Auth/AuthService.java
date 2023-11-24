@@ -3,6 +3,8 @@ package com.viamatica.springboot.Auth;
 import com.viamatica.springboot.Entity.User;
 import com.viamatica.springboot.JWT.JWTService;
 import com.viamatica.springboot.Repository.UserRepository;
+import com.viamatica.springboot.Util.VerifyPassword;
+import com.viamatica.springboot.Util.VerifyUsername;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,10 +19,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
-    public AuthResponse login (RequestLogin requestLogin)
-    {
+
+    public AuthResponse login(RequestLogin requestLogin) {
         try {
-            System.out.println("USERNAME: "+requestLogin.getPassword() + requestLogin.getUsername());
+            System.out.println("USERNAME: " + requestLogin.getPassword() + requestLogin.getUsername());
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestLogin.getUsername(), requestLogin.getPassword()));
             User user = userRepository.findByUsername(requestLogin.getUsername()).orElseThrow();
             String token = jwtService.getTokenFromUser(user);
@@ -29,23 +31,24 @@ public class AuthService {
                     .token(token)
                     .user(user).build();
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Error de login"+e);
+            throw new RuntimeException("Error de login" + e);
         }
     }
 
     public AuthResponse register(RequestRegister requestRegister) {
-        if(userRepository.existsByUsername(requestRegister.getUsername()))
-        {
-            return new AuthResponse(null,null,"Error: User is already registered");
-        }
+        if (userRepository.existsByUsername(requestRegister.getUsername()))
+            return new AuthResponse(null, null, "Error: User is already registered");
+        if (VerifyUsername.isValidUsername(requestRegister.getUsername()))
+            return new AuthResponse(null, null, "Error: Username is not valid");
+        if (VerifyPassword.isValidPassword(requestRegister.getPassword()))
+            return new AuthResponse(null, null, "Error: Password is not valid");
         User user = User.builder()
                 .idUsuario(1)
                 .Mail(requestRegister.getMail())
                 .Password(passwordEncoder.encode(requestRegister.getPassword()))
                 .username(requestRegister.getUsername())
                 .build();
-        System.out.println(user);
         userRepository.save(user);
-        return  new AuthResponse(user,"registered!",null);
+        return new AuthResponse(user, "registered!", null);
     }
 }
