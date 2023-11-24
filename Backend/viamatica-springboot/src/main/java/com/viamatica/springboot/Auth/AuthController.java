@@ -1,6 +1,5 @@
 package com.viamatica.springboot.Auth;
 
-import com.viamatica.springboot.Util.VerifyUsername;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

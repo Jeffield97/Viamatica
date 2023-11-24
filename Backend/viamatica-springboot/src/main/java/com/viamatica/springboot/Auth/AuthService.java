@@ -3,8 +3,9 @@ package com.viamatica.springboot.Auth;
 import com.viamatica.springboot.Entity.User;
 import com.viamatica.springboot.JWT.JWTService;
 import com.viamatica.springboot.Repository.UserRepository;
-import com.viamatica.springboot.Util.VerifyPassword;
-import com.viamatica.springboot.Util.VerifyUsername;
+import com.viamatica.springboot.Util.ValidatorIdentification;
+import com.viamatica.springboot.Util.ValidatorPassword;
+import com.viamatica.springboot.Util.ValidatorUsername;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,12 +37,16 @@ public class AuthService {
     }
 
     public AuthResponse register(RequestRegister requestRegister) {
+        //Username, Password, User exist and Identification validations
         if (userRepository.existsByUsername(requestRegister.getUsername()))
             return new AuthResponse(null, null, "Error: User is already registered");
-        if (VerifyUsername.isValidUsername(requestRegister.getUsername()))
+        if (!ValidatorUsername.isValidUsername(requestRegister.getUsername()))
             return new AuthResponse(null, null, "Error: Username is not valid");
-        if (VerifyPassword.isValidPassword(requestRegister.getPassword()))
+        if (!ValidatorPassword.isValidPassword(requestRegister.getPassword()))
             return new AuthResponse(null, null, "Error: Password is not valid");
+        if (!ValidatorIdentification.isValidIdentification(requestRegister.getIdentification()))
+            return new AuthResponse(null,null,"Error: Identification is not valid");
+        //Create user with the requestRegister information
         User user = User.builder()
                 .idUsuario(1)
                 .Mail(requestRegister.getMail())
