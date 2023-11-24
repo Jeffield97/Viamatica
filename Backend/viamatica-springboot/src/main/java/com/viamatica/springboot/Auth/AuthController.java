@@ -20,4 +20,14 @@ public class AuthController {
         return authService.register(requestRegister);
     }
 
+    @GetMapping("/logout")
+//    public String logout() {
+//        return "Logged out";
+//    }
+    public  String logout(@RequestHeader("Authorization") String authorizationHeader)
+    {
+        System.out.println(authorizationHeader);
+        return authService.logout(authorizationHeader);
+    }
+
 }
