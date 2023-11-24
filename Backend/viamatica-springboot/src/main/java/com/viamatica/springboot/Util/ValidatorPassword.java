@@ -3,7 +3,7 @@ package com.viamatica.springboot.Util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VerifyPassword {
+public class ValidatorPassword {
     public static boolean isValidPassword(String password) {
         return hasMinimumLength(password)
                 && containsUppercaseLetter(password)

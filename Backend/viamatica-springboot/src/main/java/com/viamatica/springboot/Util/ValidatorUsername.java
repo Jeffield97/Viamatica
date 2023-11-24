@@ -3,7 +3,7 @@ package com.viamatica.springboot.Util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VerifyUsername {
+public class ValidatorUsername {
 
 
     public static boolean isValidUsername(String username) {
