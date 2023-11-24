@@ -29,12 +29,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse login(RequestLogin requestLogin) {
+        User user = userRepository.findByUsername(requestLogin.getUsername()).orElseThrow();
+        if (user.getSessionActive().equals("Y")) return new AuthResponse(null, null, "User is already logged in");
+        if (user.getFailedLoginAttemps() >= 3) return new AuthResponse(null, null, "User blocked");
+
+
         try {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestLogin.getUsername(), requestLogin.getPassword()));
-            User user = userRepository.findByUsername(requestLogin.getUsername()).orElseThrow();
-            System.out.println("USER SESSION ACTIVE: " + user.getSessionActive());
-            if (user.getSessionActive().equals("Y")) return new AuthResponse(null, null, "User is already logged in");
+//            User user = userRepository.findByUsername(requestLogin.getUsername()).orElseThrow();
+//            if (user.getSessionActive().equals("Y")) return new AuthResponse(null, null, "User is already logged in");
             String token = jwtService.getTokenFromUser(user);
             user.setSessionActive("Y");
             userRepository.save(user);
@@ -48,6 +52,9 @@ public class AuthService {
                     .token(token)
                     .user(user).build();
         } catch (AuthenticationException e) {
+            //Adding failedLoginAttemps to user account
+            user.setFailedLoginAttemps(user.getFailedLoginAttemps() + 1);
+            userRepository.save(user);
             throw new RuntimeException("Error de login" + e);
         }
     }
@@ -62,12 +69,15 @@ public class AuthService {
             return new AuthResponse(null, null, "Error: Password is not valid");
         if (!ValidatorIdentification.isValidIdentification(requestRegister.getIdentification()))
             return new AuthResponse(null, null, "Error: Identification is not valid");
+
         //Create user with the requestRegister information
         User user = User.builder()
                 .idUsuario(1)
                 .Mail(requestRegister.getMail())
                 .Password(passwordEncoder.encode(requestRegister.getPassword()))
                 .username(requestRegister.getUsername())
+                .failedLoginAttemps(0)
+                .sessionActive("N")
                 .build();
         userRepository.save(user);
         return new AuthResponse(user, "registered!", null);

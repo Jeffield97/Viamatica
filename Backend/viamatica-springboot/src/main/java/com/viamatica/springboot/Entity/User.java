@@ -23,6 +23,7 @@ public class User implements UserDetails {
     private String Password;
     private String Mail;
     private String sessionActive;
+    private Integer failedLoginAttemps;
     //Relation with Person table
     @ManyToOne
     @JoinColumn(name = "Persona_idPersona2")
