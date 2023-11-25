@@ -1,8 +1,10 @@
 package com.viamatica.springboot.Auth;
 
+import com.viamatica.springboot.Entity.Person;
 import com.viamatica.springboot.Entity.Session;
 import com.viamatica.springboot.Entity.User;
 import com.viamatica.springboot.JWT.JWTService;
+import com.viamatica.springboot.Repository.PersonRepository;
 import com.viamatica.springboot.Repository.SessionRepository;
 import com.viamatica.springboot.Repository.UserRepository;
 import com.viamatica.springboot.Util.ValidatorIdentification;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +32,7 @@ public class AuthService {
     private final SessionRepository sessionRepository;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final PersonRepository personRepository;
 
     public AuthResponse login(RequestLogin requestLogin) {
         User user = userRepository.findByUsername(requestLogin.getUsername()).orElseThrow();
@@ -56,6 +60,11 @@ public class AuthService {
         } catch (AuthenticationException e) {
             //Adding failedLoginAttemps to user account
             user.setFailedLoginAttemps(user.getFailedLoginAttemps() + 1);
+            if(user.getFailedLoginAttemps()==2)
+            {
+                user.setStatus("Inactive");
+                userRepository.save(user);
+            }
             userRepository.save(user);
             throw new RuntimeException("Error de login" + e);
         }
@@ -73,6 +82,7 @@ public class AuthService {
             return new AuthResponse(null, null, "Error: Identification is not valid");
 
         //Create user with the requestRegister information
+        Person person = personRepository.save(Person.builder().build());
         User user = User.builder()
                 .idUsuario(1)
                 .Mail(requestRegister.getMail())
@@ -80,8 +90,11 @@ public class AuthService {
                 .username(requestRegister.getUsername())
                 .failedLoginAttemps(0)
                 .sessionActive("N")
+                .persona(person)
+                .status("active")
                 .build();
         userRepository.save(user);
+
         return new AuthResponse(user, "registered!", null);
     }
 
@@ -99,17 +112,14 @@ public class AuthService {
 
                 //Change the value of FechaCierre in Session table
                 Optional<Session> activeSessionOptional = sessionRepository.findByUsuariosAndFechaCierreIsNull(user);
-                if(activeSessionOptional.isPresent())
-                {
+                if (activeSessionOptional.isPresent()) {
                     Session session = activeSessionOptional.get();
                     session.setFechaCierre(LocalDateTime.now());
                     sessionRepository.save(session);
-                }
-                else {
+                } else {
                     throw new SessionException("Session not found");
                 }
-            }
-            else {
+            } else {
                 throw new UsernameNotFoundException("User not found");
             }
             return new LogoutResponse(true);
