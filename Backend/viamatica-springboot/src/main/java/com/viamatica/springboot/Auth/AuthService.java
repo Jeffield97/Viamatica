@@ -10,9 +10,11 @@ import com.viamatica.springboot.Util.ValidatorPassword;
 import com.viamatica.springboot.Util.ValidatorUsername;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.SessionException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +85,7 @@ public class AuthService {
         return new AuthResponse(user, "registered!", null);
     }
 
-    public String logout(String authorizationHeader) {
+    public LogoutResponse logout(String authorizationHeader) {
         String token = authorizationHeader.substring("Bearer ".length());
         try {
             Claims claims = jwtService.decodeJWT(token);
@@ -97,17 +99,23 @@ public class AuthService {
 
                 //Change the value of FechaCierre in Session table
                 Optional<Session> activeSessionOptional = sessionRepository.findByUsuariosAndFechaCierreIsNull(user);
-                activeSessionOptional.ifPresent(session -> {
+                if(activeSessionOptional.isPresent())
+                {
+                    Session session = activeSessionOptional.get();
                     session.setFechaCierre(LocalDateTime.now());
                     sessionRepository.save(session);
-                });
+                }
+                else {
+                    throw new SessionException("Session not found");
+                }
             }
-
-
-            return "Logout success!";
+            else {
+                throw new UsernameNotFoundException("User not found");
+            }
+            return new LogoutResponse(true);
         } catch (Exception e) {
             // Manejar la excepción en caso de que el token no sea válido
-            return "Error decoding token: " + e.getMessage();
+            throw new SessionException("Error");
         }
     }
 

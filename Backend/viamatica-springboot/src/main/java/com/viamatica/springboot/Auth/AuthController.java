@@ -21,12 +21,8 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-//    public String logout() {
-//        return "Logged out";
-//    }
-    public  String logout(@RequestHeader("Authorization") String authorizationHeader)
+    public  LogoutResponse logout(@RequestHeader("Authorization") String authorizationHeader)
     {
-        System.out.println(authorizationHeader);
         return authService.logout(authorizationHeader);
     }
 

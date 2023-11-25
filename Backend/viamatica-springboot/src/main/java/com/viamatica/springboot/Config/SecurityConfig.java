@@ -23,10 +23,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .cors().disable()
+                .cors().and()
                 .authorizeHttpRequests(authorizeHttp -> authorizeHttp
                         .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
