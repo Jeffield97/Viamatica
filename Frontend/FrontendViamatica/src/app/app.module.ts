@@ -9,13 +9,15 @@ import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { ListusersComponent } from './components/listusers/listusers.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    NavbarComponent
+    NavbarComponent,
+    ListusersComponent
   ],
   imports: [
     BrowserModule,

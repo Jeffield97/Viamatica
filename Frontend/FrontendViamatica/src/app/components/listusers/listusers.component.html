@@ -1,0 +1,19 @@
+<div>
+    <h3>Usuarios inactivos</h3>
+    <div *ngFor="let item of data">
+        <div *ngIf="item.status=='inactive'">
+            <p>{{ item.username }}</p>
+            <button>Modificar</button>
+            <button>Eliminar</button>
+        </div>
+    </div>
+
+    <h3>Usuarios activos</h3>
+    <div *ngFor="let item of data">
+        <div *ngIf="item.status=='active'">
+            <p>{{ item.username }}</p>
+            <button>Modificar</button>
+            <button>Eliminar</button>
+        </div>
+    </div>
+</div>
