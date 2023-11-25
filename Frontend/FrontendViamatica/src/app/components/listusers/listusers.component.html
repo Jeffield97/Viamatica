@@ -1,19 +1,20 @@
 <div>
-    <h3>Usuarios inactivos</h3>
+    <h3 class="text-xl font-bold">Usuarios inactivos</h3>
     <div *ngFor="let item of data">
-        <div *ngIf="item.status=='inactive'">
-            <p>{{ item.username }}</p>
-            <button>Modificar</button>
-            <button>Eliminar</button>
-        </div>
+      <div *ngIf="item.status === 'inactive'" class="mt-4 p-4 border rounded">
+        <p class="text-lg font-semibold">{{ item.username }}</p>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Modificar</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+      </div>
     </div>
-
-    <h3>Usuarios activos</h3>
+  
+    <h3 class="text-xl font-bold mt-8">Usuarios activos</h3>
     <div *ngFor="let item of data">
-        <div *ngIf="item.status=='active'">
-            <p>{{ item.username }}</p>
-            <button>Modificar</button>
-            <button>Eliminar</button>
-        </div>
+      <div *ngIf="item.status === 'active'" class="mt-4 p-4 border rounded">
+        <p class="text-lg font-semibold">{{ item.username }}</p>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Modificar</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+      </div>
     </div>
-</div>
+  </div>
+  

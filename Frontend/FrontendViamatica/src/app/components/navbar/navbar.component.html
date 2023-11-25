@@ -1,16 +1,17 @@
 <!-- navbar.component.html -->
-<nav class="navbar navbar-expand navbar-light bg-light">
-    <a class="navbar-brand" href="#">Mi Aplicación</a>
-  
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <span class="navbar-text" *ngIf="username">Hola, {{ username }}!</span>
+<nav class="bg-blue-500 p-4">
+  <div class="container mx-auto flex items-center justify-between">
+    <a class="text-white text-xl font-bold" href="#">Mi Aplicación</a>
+
+    <div>
+      <ul class="flex items-center space-x-4">
+        <li>
+          <span class="text-white" *ngIf="username">Hola, {{ username }}!</span>
         </li>
-        <li class="nav-item" *ngIf="username">
-          <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
+        <li *ngIf="username">
+          <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="logout()">Logout</button>
         </li>
       </ul>
     </div>
-  </nav>
-  
+  </div>
+</nav>
