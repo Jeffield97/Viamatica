@@ -6,8 +6,9 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './module/login/login.component';
 import { DashboardComponent } from './module/dashboard/dashboard.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthInterceptor } from './interceptor/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,11 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [ {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true,
+  },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
